@@ -1,0 +1,17 @@
+apiVersion: v2
+name: csi-nebulon
+description: Nebulon CSI Driver
+
+type: application
+
+
+version: 0.1.2
+
+maintainers: 
+  - name: Nebulon Support #todo
+    email: info@nebulon.com #todo
+
+icon: https://bitbucket.org/nebuloninc/static-content/raw/92e622ec9d94e896f3d0b2cbb977df545cf0a826/img/nebulon.png #todo
+
+appVersion: 0.1.2
+

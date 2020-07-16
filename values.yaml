@@ -1,0 +1,14 @@
+driver:
+  image: quay.io/nebulon/csi-driver
+  tag: 0.1.2
+
+kubelet:
+  # Path to the node's kubelet directory. 
+  path: /var/lib/kubelet
+
+storageclass:
+  name: nebulon
+  # Enable deployment of the Nebulon-backed StorageClass
+  enabled: true
+  # Make the Nebulon-backed StorageClass the default
+  default: false

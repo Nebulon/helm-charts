@@ -1,0 +1,151 @@
+# Service defined here, plus serviceName below in DaemonSet,
+# are needed only because of condition explained in
+# https://github.com/kubernetes/kubernetes/issues/69608
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: csi-nebulon-plugin
+  labels:
+    app: csi-nebulon-plugin
+spec:
+  selector:
+    app: csi-nebulon-plugin
+  ports:
+    - name: dummy
+      port: 12345
+---
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: csi-nebulon-plugin
+  labels:
+    csi-nebulon: "true"
+spec:
+  selector:
+    matchLabels:
+      app: csi-nebulon-plugin
+  template:
+    metadata:
+      labels:
+        app: csi-nebulon-plugin
+        csi-nebulon: "true"
+    spec:
+      hostNetwork: true
+      containers:
+        - name: node-driver-registrar
+          image: quay.io/k8scsi/csi-node-driver-registrar:v1.2.0
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "rm -rf /registration/csi-nebulon /registration/csi-nebulon-reg.sock"]
+          args:
+            - "--v=5"
+            - "--csi-address=/csi/csi.sock"
+            - --kubelet-registration-path={{ .Values.kubelet.path }}/plugins/csi-nebulon/csi.sock
+          securityContext:
+            privileged: true
+          env:
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+          volumeMounts:
+          - mountPath: /csi
+            name: socket-dir
+          - mountPath: /registration
+            name: registration-dir
+
+        - name: nebulon
+          image: "{{ .Values.driver.image }}:{{ .Values.driver.tag }}"
+          args:
+            - "--v=5"
+            - "--csi-endpoint=unix:///csi/csi.sock"
+            - "--api-endpoint=$(NEBULON_API_ENDPOINT)"
+            - "--nodeid=$(KUBE_NODE_NAME)"
+            - "--username=$(NEBULON_USERNAME)"
+            - "--password=$(NEBULON_PASSWORD)"
+          env:
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: NEBULON_USERNAME
+              valueFrom:
+                  secretKeyRef:
+                    name: nebulon-credentials
+                    key: username
+            - name: NEBULON_PASSWORD
+              valueFrom:
+                  secretKeyRef:
+                    name: nebulon-credentials
+                    key: password
+            - name: NEBULON_API_ENDPOINT
+              valueFrom:
+                  secretKeyRef:
+                    name: nebulon-credentials
+                    key: api_endpoint
+          securityContext:
+            privileged: true
+          ports:
+          - containerPort: 9898
+            name: healthz
+            protocol: TCP
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: healthz
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 2
+
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+            - mountPath: {{ .Values.kubelet.path }}/pods
+              mountPropagation: Bidirectional
+              name: mountpoint-dir
+            - mountPath: {{ .Values.kubelet.path }}/plugins
+              mountPropagation: Bidirectional
+              name: plugins-dir
+            - name: dev
+              mountPath: /dev
+            - name: sys
+              mountPath: /sys
+
+        - name: liveness-probe
+          volumeMounts:
+          - mountPath: /csi
+            name: socket-dir
+          image: quay.io/k8scsi/livenessprobe:v1.1.0
+          args:
+            - "--csi-address=/csi/csi.sock"
+            - "--connection-timeout=3s"
+            - "--health-port=9898"
+
+      volumes:
+        - hostPath:
+            path: {{ .Values.kubelet.path }}/plugins/csi-nebulon
+            type: DirectoryOrCreate
+          name: socket-dir
+        - hostPath:
+            path: {{ .Values.kubelet.path }}/pods
+            type: DirectoryOrCreate
+          name: mountpoint-dir
+        - hostPath:
+            path: {{ .Values.kubelet.path }}/plugins_registry
+            type: Directory
+          name: registration-dir
+        - hostPath:
+            path: {{ .Values.kubelet.path }}/plugins
+            type: Directory
+          name: plugins-dir
+        - hostPath:
+            path: /dev
+          name: dev
+        - hostPath:
+            path: /sys
+          name: sys
