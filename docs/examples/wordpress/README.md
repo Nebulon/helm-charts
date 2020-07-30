@@ -1,4 +1,4 @@
-# Kuberentes Wordpress Demo App w/Persistent Volumes
+# Kubernetes Wordpress Demo App w/Persistent Volumes
 
 ## Prerequisites
 * A load balancer is required for the Wordpress site frontend in bare metal environments without an external load balancer. Instructions for installing MetalLB can be found here: https://metallb.universe.tf/
