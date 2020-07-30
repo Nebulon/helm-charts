@@ -7,3 +7,6 @@ helm upgrade \
   nebulon-csi-driver \
   .
 ```
+
+Examples
+* [WordPress](https://github.com/Nebulon/helm-charts/tree/master/docs/examples/wordpress)

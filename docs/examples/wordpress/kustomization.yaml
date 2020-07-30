@@ -1,0 +1,10 @@
+secretGenerator:
+- name: mysql-pass
+  literals:
+  - password=ChangeM3! 
+  namespace: wordpress
+resources:
+  - wordpress-namespace.yaml
+  - mysql-deployment.yaml
+  - wordpress-deployment.yaml
+  - nebulon_storageclass.yaml
