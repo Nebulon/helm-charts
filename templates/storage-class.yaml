@@ -5,7 +5,7 @@ metadata:
   name: {{ .Values.storageclass.name }}
   annotations:
     storageclass.kubernetes.io/is-default-class: "{{ .Values.storageclass.default }}"
-provisioner: nebulon.csi.nebulon.com
+provisioner: csi.nebulon.com
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
 allowVolumeExpansion: false
