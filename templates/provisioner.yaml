@@ -2,6 +2,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: csi-nebulon-provisioner
+  namespace: {{ .Release.Namespace }}
   labels:
     app: csi-nebulon-provisioner
 spec:
@@ -16,6 +17,7 @@ kind: StatefulSet
 apiVersion: apps/v1
 metadata:
   name: csi-nebulon-provisioner
+  namespace: {{ .Release.Namespace }}
   labels:
     csi-nebulon: "true"
 spec:

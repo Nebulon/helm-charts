@@ -5,13 +5,13 @@ description: Nebulon CSI Driver
 type: application
 
 
-version: 0.1.2
+version: 0.1.3
 
 maintainers: 
   - name: Nebulon Support #todo
     email: info@nebulon.com #todo
 
-icon: https://bitbucket.org/nebuloninc/static-content/raw/92e622ec9d94e896f3d0b2cbb977df545cf0a826/img/nebulon.png #todo
+icon: https://raw.githubusercontent.com/Nebulon/helm-charts/master/docs/Nebulon.svg
 
-appVersion: 0.1.2
+appVersion: 0.1.3
 
