@@ -75,4 +75,4 @@ spec:
   resources:
     requests:
       storage: 25Gi
-  storageClassName: nebulon #Added for the nebulon CSI driver
+  storageClassName: nebulon-mirrored #Added for the nebulon CSI driver
