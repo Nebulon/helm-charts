@@ -1,6 +1,27 @@
 driver:
   image: quay.io/nebulon/csi-driver
-  tag: 0.1.3
+  tag: 0.1.4
+  name: csi.nebulon.com
+
+registrar:
+  image: quay.io/k8scsi/csi-node-driver-registrar
+  tag: v1.3.0
+
+attacher:
+  image: quay.io/k8scsi/csi-attacher
+  tag: v2.2.0
+
+provisioner:
+  image: quay.io/k8scsi/csi-provisioner
+  tag: v2.0.0-rc2
+
+snapshotter:
+  image: quay.io/k8scsi/csi-snapshotter
+  tag: v2.1.0
+
+liveness:
+  image: quay.io/k8scsi/livenessprobe
+  tag: v2.0.0
 
 kubelet:
   # Path to the node's kubelet directory. 
@@ -11,4 +32,22 @@ storageclass:
   # Enable deployment of the Nebulon-backed StorageClass
   enabled: true
   # Make the Nebulon-backed StorageClass the default
+  default: false
+  # volume expansion
+  allowexpansion: false
+
+storageclassmirrored:
+  name: nebulon-mirrored
+  # Enable deployment of the Nebulon-backed StorageClass for mirrored volumes
+  enabled: true
+  # Make the Nebulon-backed StorageClass the default
+  default: false
+  # volume expansion
+  allowexpansion: false
+
+snapshotclass:
+  name: nebulon-snap
+  # Enable deployment of the Nebulon-backed SnapshotClass
+  enabled: false
+    # Make the Nebulon-backed SnapshotClass the default
   default: false

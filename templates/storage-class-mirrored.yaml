@@ -1,0 +1,14 @@
+{{ if .Values.storageclassmirrored.enabled }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.storageclassmirrored.name }}
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "{{ .Values.storageclassmirrored.default }}"
+provisioner: {{ .Values.driver.name }}
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+allowVolumeExpansion: {{ .Values.storageclassmirrored.allowexpansion }}
+parameters:
+  volumeProtection: "mirrored"
+{{ end }}

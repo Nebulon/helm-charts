@@ -1,0 +1,10 @@
+{{ if .Values.snapshotclass.enabled }}
+apiVersion: snapshot.storage.k8s.io/v1beta1
+kind: VolumeSnapshotClass
+metadata:
+  name: {{ .Values.snapshotclass.name }}
+  annotations:
+    snapshot.storage.kubernetes.io/is-default-class: "{{ .Values.snapshotclass.default }}"
+driver: {{ .Values.driver.name }}
+deletionPolicy: Delete
+{{ end }}

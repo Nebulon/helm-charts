@@ -1,0 +1,127 @@
+# Service defined here, plus serviceName below in StatefulSet,
+# are needed only because of condition explained in
+# https://github.com/kubernetes/kubernetes/issues/69608
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: csi-nebulon-controller
+  namespace: {{ .Release.Namespace }}
+  labels:
+    csi-nebulon: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: csi-nebulon-controller
+  template:
+    metadata:
+      labels:
+        app: csi-nebulon-controller
+        csi-nebulon: "true"
+    spec:
+      serviceAccountName: csi-nebulon-controller-sa
+      priorityClassName: system-cluster-critical
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
+      containers:
+        #provisioner
+        - name: csi-nebulon-provisioner
+          image: "{{ .Values.provisioner.image }}:{{ .Values.provisioner.tag }}"
+          args:
+            - -v=5
+            - --csi-address=/csi/csi.sock
+            - --connection-timeout=15s
+            - --feature-gates=Topology=true
+            - --timeout=60s
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /csi
+        
+        #attacher
+        - name: csi-nebulon-attacher
+          image: "{{ .Values.attacher.image }}:{{ .Values.attacher.tag }}"
+          args:
+            - --v=5
+            - --csi-address=/csi/csi.sock
+            - --timeout=60s
+          volumeMounts:
+          - mountPath: /csi
+            name: socket-dir
+
+        #snapshotter
+        - name: csi-nebulon-snapshotter
+          image: "{{ .Values.snapshotter.image }}:{{ .Values.snapshotter.tag }}"
+          args:
+            - --v=5
+            - --csi-address=/csi/csi.sock
+            - --timeout=60s
+          volumeMounts:
+          - mountPath: /csi
+            name: socket-dir
+
+        #liveness-probe    
+        - name: liveness-probe
+          volumeMounts:
+          - mountPath: /csi
+            name: socket-dir
+          image: "{{ .Values.liveness.image }}:{{ .Values.liveness.tag }}"
+          args:
+            - "--csi-address=/csi/csi.sock"
+            - "--health-port=9899"
+        
+        # driver 
+        - name: nebulon
+          image: "{{ .Values.driver.image }}:{{ .Values.driver.tag }}"
+          args:
+            - "--v=5"
+            - "--csi-endpoint=unix:///csi/csi.sock"
+            - "--api-endpoint=$(NEBULON_API_ENDPOINT)"
+            - "--nodeid=$(KUBE_NODE_NAME)"
+          env:
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: NEBULON_USERNAME
+              valueFrom:
+                  secretKeyRef:
+                    name: nebulon-credentials
+                    key: username
+            - name: NEBULON_PASSWORD
+              valueFrom:
+                  secretKeyRef:
+                    name: nebulon-credentials
+                    key: password
+            - name: NEBULON_API_ENDPOINT
+              valueFrom:
+                  secretKeyRef:
+                    name: nebulon-credentials
+                    key: api_endpoint
+          securityContext:
+            privileged: true
+          ports:
+          - containerPort: 9899
+            name: healthz
+            protocol: TCP
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: healthz
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 2
+
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+        
+      # list of volumes start here 
+      volumes:
+        - name: socket-dir
+          emptyDir: {}
