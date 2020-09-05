@@ -5,8 +5,8 @@ metadata:
   name: {{ .Values.storageclass.name }}
   annotations:
     storageclass.kubernetes.io/is-default-class: "{{ .Values.storageclass.default }}"
-provisioner: csi.nebulon.com
+provisioner: {{ .Values.driver.name }}
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
-allowVolumeExpansion: false
+allowVolumeExpansion: {{ .Values.storageclass.allowexpansion }}
 {{ end }}

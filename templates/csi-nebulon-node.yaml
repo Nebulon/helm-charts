@@ -5,13 +5,13 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: csi-nebulon-plugin
+  name: csi-nebulon-node
   namespace: {{ .Release.Namespace }}
   labels:
-    app: csi-nebulon-plugin
+    app: csi-nebulon-node
 spec:
   selector:
-    app: csi-nebulon-plugin
+    app: csi-nebulon-node
   ports:
     - name: dummy
       port: 12345
@@ -19,31 +19,31 @@ spec:
 kind: DaemonSet
 apiVersion: apps/v1
 metadata:
-  name: csi-nebulon-plugin
+  name: csi-nebulon-node
   namespace: {{ .Release.Namespace }}
   labels:
     csi-nebulon: "true"
 spec:
   selector:
     matchLabels:
-      app: csi-nebulon-plugin
+      app: csi-nebulon-node
   template:
     metadata:
       labels:
-        app: csi-nebulon-plugin
+        app: csi-nebulon-node
         csi-nebulon: "true"
     spec:
       hostNetwork: true
       containers:
         - name: node-driver-registrar
-          image: quay.io/k8scsi/csi-node-driver-registrar:v1.2.0
+          image: "{{ .Values.registrar.image }}:{{ .Values.registrar.tag }}"
           lifecycle:
             preStop:
               exec:
                 command: ["/bin/sh", "-c", "rm -rf /registration/csi-nebulon /registration/csi-nebulon-reg.sock"]
           args:
-            - "--v=5"
-            - "--csi-address=/csi/csi.sock"
+            - --v=5
+            - --csi-address=/csi/csi.sock
             - --kubelet-registration-path={{ .Values.kubelet.path }}/plugins/csi-nebulon/csi.sock
           securityContext:
             privileged: true
@@ -66,8 +66,6 @@ spec:
             - "--csi-endpoint=unix:///csi/csi.sock"
             - "--api-endpoint=$(NEBULON_API_ENDPOINT)"
             - "--nodeid=$(KUBE_NODE_NAME)"
-            - "--username=$(NEBULON_USERNAME)"
-            - "--password=$(NEBULON_PASSWORD)"
           env:
             - name: KUBE_NODE_NAME
               valueFrom:
@@ -117,16 +115,14 @@ spec:
               mountPath: /dev
             - name: sys
               mountPath: /sys
-
         - name: liveness-probe
           volumeMounts:
           - mountPath: /csi
             name: socket-dir
-          image: quay.io/k8scsi/livenessprobe:v1.1.0
+          image: "{{ .Values.liveness.image }}:{{ .Values.liveness.tag }}"
           args:
-            - "--csi-address=/csi/csi.sock"
-            - "--connection-timeout=3s"
-            - "--health-port=9898"
+            - --csi-address=/csi/csi.sock
+            - --health-port=9898
 
       volumes:
         - hostPath:
