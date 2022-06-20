@@ -1,5 +1,9 @@
 {{ if .Values.snapshotclass.enabled }}
+{{ if .Values.snapshotclass.beta1 }}
 apiVersion: snapshot.storage.k8s.io/v1beta1
+{{ else }}
+apiVersion: snapshot.storage.k8s.io/v1
+{{ end }}
 kind: VolumeSnapshotClass
 metadata:
   name: {{ .Values.snapshotclass.name }}

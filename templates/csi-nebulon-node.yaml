@@ -101,6 +101,12 @@ spec:
             initialDelaySeconds: 10
             timeoutSeconds: 3
             periodSeconds: 2
+          startupProbe:
+            failureThreshold: 30
+            periodSeconds: 10
+            httpGet:
+              path: /healthz
+              port: healthz
 
           volumeMounts:
             - mountPath: /csi
