@@ -2,8 +2,22 @@ apiVersion: v1
 entries:
   csi-nebulon:
   - apiVersion: v2
+    appVersion: 0.1.11
+    created: "2022-06-20T15:52:04.360169-07:00"
+    description: Nebulon CSI Driver
+    digest: 887d376a668d7531085cbab328049e7542ebcfc4a3b553b2f6574d7027fbd555
+    icon: https://raw.githubusercontent.com/Nebulon/helm-charts/master/docs/Nebulon.svg
+    maintainers:
+    - email: info@nebulon.com
+      name: Nebulon Support
+    name: csi-nebulon
+    type: application
+    urls:
+    - https://nebulon.github.io/helm-charts/csi-nebulon-0.1.11.tgz
+    version: 0.1.11
+  - apiVersion: v2
     appVersion: 0.1.7
-    created: "2020-12-23T00:47:48.600187-08:00"
+    created: "2022-06-20T15:52:04.37859-07:00"
     description: Nebulon CSI Driver
     digest: 69d4bb3a7a90f1faec9e7496b582ceb9783873c16dfc44c0d42a942ba8c8caaa
     icon: https://raw.githubusercontent.com/Nebulon/helm-charts/master/docs/Nebulon.svg
@@ -17,7 +31,7 @@ entries:
     version: 0.1.7
   - apiVersion: v2
     appVersion: 0.1.5
-    created: "2020-12-23T00:47:48.599544-08:00"
+    created: "2022-06-20T15:52:04.376231-07:00"
     description: Nebulon CSI Driver
     digest: aaf16b624e2cd0f897b8a15b9c544f8f16b90b1bc27a2286738e1121af35248a
     icon: https://raw.githubusercontent.com/Nebulon/helm-charts/master/docs/Nebulon.svg
@@ -31,7 +45,7 @@ entries:
     version: 0.1.5
   - apiVersion: v2
     appVersion: 0.1.4
-    created: "2020-12-23T00:47:48.598923-08:00"
+    created: "2022-06-20T15:52:04.373593-07:00"
     description: Nebulon CSI Driver
     digest: e18c7540db64791584b296fed163655ed5dcc9c837a754bf61edb67365e44b7d
     icon: https://raw.githubusercontent.com/Nebulon/helm-charts/master/docs/Nebulon.svg
@@ -45,7 +59,7 @@ entries:
     version: 0.1.4
   - apiVersion: v2
     appVersion: 0.1.3
-    created: "2020-12-23T00:47:48.59798-08:00"
+    created: "2022-06-20T15:52:04.370778-07:00"
     description: Nebulon CSI Driver
     digest: f6655e60589731af1b639d60e661eee9215b05c855223d02972b26476e5aae91
     icon: https://raw.githubusercontent.com/Nebulon/helm-charts/master/docs/Nebulon.svg
@@ -59,7 +73,7 @@ entries:
     version: 0.1.3
   - apiVersion: v2
     appVersion: 0.1.2
-    created: "2020-12-23T00:47:48.596958-08:00"
+    created: "2022-06-20T15:52:04.368448-07:00"
     description: Nebulon CSI Driver
     digest: 264853ea78bc0aa1eaa55366c27371e97d17bf50ec7492dcdac93bec92fd9958
     icon: https://bitbucket.org/nebuloninc/static-content/raw/92e622ec9d94e896f3d0b2cbb977df545cf0a826/img/nebulon.png
@@ -71,4 +85,4 @@ entries:
     urls:
     - https://nebulon.github.io/helm-charts/csi-nebulon-0.1.2.tgz
     version: 0.1.2
-generated: "2020-12-23T00:47:48.590101-08:00"
+generated: "2022-06-20T15:52:04.344309-07:00"

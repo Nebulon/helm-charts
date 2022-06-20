@@ -54,7 +54,11 @@ spec:
 
         #snapshotter
         - name: csi-nebulon-snapshotter
+          {{ if .Values.snapshotclass.beta1 }}
+          image: "{{ .Values.snapshotter.imageBeta1 }}:{{ .Values.snapshotter.tagBeta1 }}"
+          {{ else }}
           image: "{{ .Values.snapshotter.image }}:{{ .Values.snapshotter.tag }}"
+          {{ end }}
           args:
             - --v=5
             - --csi-address=/csi/csi.sock
@@ -116,6 +120,12 @@ spec:
             initialDelaySeconds: 10
             timeoutSeconds: 3
             periodSeconds: 2
+          startupProbe:
+            failureThreshold: 30
+            periodSeconds: 10
+            httpGet:
+              path: /healthz
+              port: healthz
 
           volumeMounts:
             - mountPath: /csi

@@ -5,7 +5,7 @@ description: Nebulon CSI Driver
 type: application
 
 
-version: 0.1.7
+version: 0.1.11
 
 maintainers: 
   - name: Nebulon Support
@@ -13,5 +13,5 @@ maintainers:
 
 icon: https://raw.githubusercontent.com/Nebulon/helm-charts/master/docs/Nebulon.svg
 
-appVersion: 0.1.7
+appVersion: 0.1.11
 

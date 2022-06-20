@@ -1,6 +1,6 @@
 driver:
   image: quay.io/nebulon/csi-driver
-  tag: 0.1.7
+  tag: 0.1.11
   name: csi.nebulon.com
 
 registrar:
@@ -16,12 +16,14 @@ provisioner:
   tag: v2.0.0-rc2
 
 snapshotter:
+  imageBeta1: quay.io/k8scsi/csi-snapshotter
+  tagBeta1: v2.1.0
   image: quay.io/k8scsi/csi-snapshotter
-  tag: v2.1.0
+  tag: v4.0.0
 
 liveness:
   image: quay.io/k8scsi/livenessprobe
-  tag: v2.0.0
+  tag: v2.2.0
 
 kubelet:
   # Path to the node's kubelet directory. 
@@ -49,5 +51,7 @@ snapshotclass:
   name: nebulon-snap
   # Enable deployment of the Nebulon-backed SnapshotClass
   enabled: false
-    # Make the Nebulon-backed SnapshotClass the default
+  # Make the Nebulon-backed SnapshotClass the default
   default: false
+  # if set to true, use v1beta1 support
+  beta1: false
